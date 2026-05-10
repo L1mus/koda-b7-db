@@ -113,3 +113,116 @@ INSERT INTO transfer_contacts (user_id, favorite_user_id, created_at) VALUES
 (6, 2, '2024-03-05 10:00:00'),
 (7, 1, '2024-03-10 11:00:00'),
 (9, 4, '2024-03-15 12:00:00');
+
+
+-- users (11-20)
+INSERT INTO users (full_name, username, email, hash_password, hash_pin, phone, profile_picture_url, is_verified, created_at) VALUES
+('Cameron Williamson', 'cameronwilliamson', 'cameron@gmail.com', '$2b$10$abc123hashedpassword11', '$2b$10$abc123hashedpin11', '081234567900', 'https://storage.example.com/photos/cameron.jpg', TRUE, '2024-01-11 08:00:00'),
+('Cody Fisher', 'codyfisher', 'cody@gmail.com', '$2b$10$abc123hashedpassword12', '$2b$10$abc123hashedpin12', '081234567901', 'https://storage.example.com/photos/cody.jpg', TRUE, '2024-01-12 09:00:00'),
+('Kristin Watson', 'kristinwatson', 'kristin@gmail.com', '$2b$10$abc123hashedpassword13', '$2b$10$abc123hashedpin13', '081234567902', 'https://storage.example.com/photos/kristin.jpg', FALSE, '2024-01-13 10:00:00'),
+('Wade Warren', 'wadewarren', 'wade@gmail.com', '$2b$10$abc123hashedpassword14', '$2b$10$abc123hashedpin14', '081234567903', 'https://storage.example.com/photos/wade.jpg', TRUE, '2024-01-14 11:00:00'),
+('Savannah Nguyen', 'savannahnguyen', 'savannah@gmail.com', '$2b$10$abc123hashedpassword15', '$2b$10$abc123hashedpin15', '081234567904', 'https://storage.example.com/photos/savannah.jpg', TRUE, '2024-01-15 12:00:00'),
+('Sherina Claw', 'sherinaclaw', 'sherina@gmail.com', '$2b$10$abc123hashedpassword16', '$2b$10$abc123hashedpin16', '081234567905', 'https://storage.example.com/photos/sherina.jpg', TRUE, '2024-01-16 13:00:00'),
+('James Bond', 'jamesbond', 'james@gmail.com', '$2b$10$abc123hashedpassword17', '$2b$10$abc123hashedpin17', '081234567906', 'https://storage.example.com/photos/james.jpg', TRUE, '2024-01-17 14:00:00'),
+('Ujang Kayu', 'ujangkayu', 'ujangkayu@gmail.com', '$2b$10$abc123hashedpassword18', '$2b$10$abc123hashedpin18', '081234567907', 'https://storage.example.com/photos/ujangkayu.jpg', FALSE, '2024-01-18 15:00:00'),
+('Budi Santoso', 'budisantoso', 'budi@gmail.com', '$2b$10$abc123hashedpassword19', '$2b$10$abc123hashedpin19', '081234567908', 'https://storage.example.com/photos/budi.jpg', TRUE, '2024-01-19 16:00:00'),
+('Siti Rahayu', 'sitirahayu', 'siti@gmail.com', '$2b$10$abc123hashedpassword20', '$2b$10$abc123hashedpin20', '081234567909', 'https://storage.example.com/photos/siti.jpg', TRUE, '2024-01-20 17:00:00');
+
+-- oauth_user (7-12)
+INSERT INTO oauth_user (user_id, provider_name, provider_user_id, created_at) VALUES
+(11, 'google', 'google-uid-cameron-011', '2024-01-11 08:01:00'),
+(12, 'facebook', 'fb-uid-cody-012', '2024-01-12 09:01:00'),
+(14, 'google', 'google-uid-wade-014', '2024-01-14 11:01:00'),
+(15, 'facebook', 'fb-uid-savannah-015', '2024-01-15 12:01:00'),
+(16, 'google', 'google-uid-sherina-016', '2024-01-16 13:01:00'),
+(17, 'google', 'google-uid-james-017', '2024-01-17 14:01:00'),
+(19, 'facebook', 'fb-uid-budi-019', '2024-01-19 16:01:00'),
+(20, 'google', 'google-uid-siti-020', '2024-01-20 17:01:00'),
+(13, 'facebook', 'fb-uid-kristin-013', '2024-01-13 10:01:00'),
+(18, 'google', 'google-uid-ujangkayu-018', '2024-01-18 15:01:00');
+
+-- forgot_password (6-15)
+INSERT INTO forgot_password (user_id, token, is_used, created_at, expired_at) VALUES
+(11, 'token-reset-fgh666hij777klm888', TRUE, '2024-04-01 08:00:00', '2024-04-01 08:30:00'),
+(12, 'token-reset-ghi777ijk888lmn999', FALSE, '2024-04-05 09:00:00', '2024-04-05 09:30:00'),
+(13, 'token-reset-hij888jkl999mno000', TRUE, '2024-04-08 10:00:00', '2024-04-08 10:30:00'),
+(15, 'token-reset-ijk999klm000nop111', FALSE, '2024-04-10 11:00:00', '2024-04-10 11:30:00'),
+(16, 'token-reset-jkl000lmn111opq222', TRUE, '2024-04-12 12:00:00', '2024-04-12 12:30:00'),
+(17, 'token-reset-klm111mno222pqr333', FALSE, '2024-04-14 13:00:00', '2024-04-14 13:30:00'),
+(18, 'token-reset-lmn222nop333qrs444', TRUE, '2024-04-16 14:00:00', '2024-04-16 14:30:00'),
+(19, 'token-reset-mno333opq444rst555', FALSE, '2024-04-18 15:00:00', '2024-04-18 15:30:00'),
+(20, 'token-reset-nop444pqr555stu666', TRUE, '2024-04-20 16:00:00', '2024-04-20 16:30:00'),
+(14, 'token-reset-opq555qrs666tuv777', FALSE, '2024-04-22 17:00:00', '2024-04-22 17:30:00');
+
+-- reviews (11-20)
+INSERT INTO reviews (user_id, rating, comment, created_at) VALUES
+(11, 5, 'Cameron di sini, transfer ke luar kota jadi gampang banget pakai Zwallet!', '2024-03-20 08:00:00'),
+(12, 4, 'Aplikasi ringan dan tidak makan banyak data. Cocok untuk HP kentang sekalipun.', '2024-03-22 09:00:00'),
+(13, 3, 'Tampilannya bagus tapi butuh fitur notifikasi yang lebih informatif.', '2024-03-24 10:00:00'),
+(14, 5, 'Top up via BCA paling cepat prosesnya, hitungan detik langsung masuk.', '2024-03-26 11:00:00'),
+(15, 5, 'Suka banget fitur bintang favorit, kontak langganan jadi mudah ditemukan.', '2024-03-28 12:00:00'),
+(16, 4, 'Sherina di sini! Sudah 1 tahun pakai, belum pernah ada transaksi yang bermasalah.', '2024-03-30 13:00:00'),
+(17, 5, 'James Bond approved! Keamanan PIN-nya bikin tenang, transaksi aman terjaga.', '2024-04-01 14:00:00'),
+(19, 4, 'Riwayat transaksi bisa dicari pakai nama, sangat membantu untuk rekap bulanan.', '2024-04-03 15:00:00'),
+(20, 5, 'Proses daftar cepat, verifikasi email langsung. Langsung bisa transfer hari itu juga.', '2024-04-05 16:00:00'),
+(18, 2, 'Masih ada bug di halaman top up kalau sinyal lemah. Semoga segera diperbaiki.', '2024-04-07 17:00:00');
+
+-- newsletter (11-20)
+INSERT INTO newsletter (email, user_id, status, created_at) VALUES
+('cameron@gmail.com', 11, 'active', '2024-01-11 08:05:00'),
+('cody@gmail.com', 12, 'unsubscribe', '2024-01-12 09:05:00'),
+('kristin@gmail.com', 13, 'active', '2024-01-13 10:05:00'),
+('wade@gmail.com', 14, 'active', '2024-01-14 11:05:00'),
+('savannah@gmail.com', 15, 'active', '2024-01-15 12:05:00'),
+('pengunjung4@gmail.com', NULL, 'active', '2024-04-01 08:00:00'),
+('pengunjung5@yahoo.com', NULL, 'unsubscribe', '2024-04-05 09:00:00'),
+('pengunjung6@outlook.com', NULL, 'active', '2024-04-10 10:00:00'),
+('budi@gmail.com', 19, 'active', '2024-01-19 16:05:00'),
+('siti@gmail.com', 20, 'active', '2024-01-20 17:05:00');
+
+-- wallet (11-20)
+INSERT INTO wallet (user_id, balance, created_at, updated_at) VALUES
+(11, 500000.00, '2024-01-11 08:10:00', '2024-04-20 08:00:00'),
+(12, 275000.00, '2024-01-12 09:10:00', '2024-04-19 09:00:00'),
+(13, 1800000.00, '2024-01-13 10:10:00', '2024-04-18 10:00:00'),
+(14, 430000.00, '2024-01-14 11:10:00', '2024-04-17 11:00:00'),
+(15, 3200000.00, '2024-01-15 12:10:00', '2024-04-16 12:00:00'),
+(16, 650000.00, '2024-01-16 13:10:00', '2024-04-15 13:00:00'),
+(17, 980000.00, '2024-01-17 14:10:00', '2024-04-14 14:00:00'),
+(18, 125000.00, '2024-01-18 15:10:00', '2024-04-13 15:00:00'),
+(19, 760000.00, '2024-01-19 16:10:00', '2024-04-12 16:00:00'),
+(20, 2100000.00, '2024-01-20 17:10:00', '2024-04-11 17:00:00');
+
+-- transactions (11-20) — 5 transfer + 5 topup
+INSERT INTO transactions (sender_id, receiver_id, amount, type, activity_type, status, description, created_at) VALUES
+(11, 1, 75000.00, 'debit', 'transfer', 'success', 'Bayar patungan makan', '2024-04-19 08:00:00'),
+(1, 11, 75000.00, 'credit', 'transfer', 'success', 'Bayar patungan makan', '2024-04-19 08:00:01'),
+(12, 3, 120000.00, 'debit', 'transfer', 'success', 'Balikin pinjaman kemarin', '2024-04-19 09:00:00'),
+(15, 7, 200000.00, 'debit', 'transfer', 'failed', 'Transfer arisan bulanan', '2024-04-19 10:00:00'),
+(20, 9, 50000.00, 'debit', 'transfer', 'success', 'Bayar tiket nonton', '2024-04-19 11:00:00'),
+(11, NULL, 250000.00, 'credit', 'topup', 'success', NULL, '2024-04-19 07:00:00'),
+(13, NULL, 500000.00, 'credit', 'topup', 'success', NULL, '2024-04-19 07:30:00'),
+(15, NULL, 100000.00, 'credit', 'topup', 'pending', NULL, '2024-04-19 08:00:00'),
+(17, NULL, 300000.00, 'credit', 'topup', 'success', NULL, '2024-04-19 09:00:00'),
+(20, NULL, 75000.00, 'credit', 'topup', 'success', NULL, '2024-04-19 10:00:00');
+
+-- topup_details (transaction_id 16-20 adalah topup)
+INSERT INTO topup_details (transaction_id, payment_method_id, order_amount, delivery_fee, tax_amount, total_amount, created_at) VALUES
+(16, 2, 250000.00, 0.00, 25000.00, 275000.00, '2024-04-19 07:00:01'),
+(17, 1, 500000.00, 0.00, 50000.00, 550000.00, '2024-04-19 07:30:01'),
+(18, 4, 100000.00, 0.00, 10000.00, 110000.00, '2024-04-19 08:00:01'),
+(19, 3, 300000.00, 0.00, 30000.00, 330000.00, '2024-04-19 09:00:01'),
+(20, 5, 75000.00, 0.00, 7500.00, 82500.00, '2024-04-19 10:00:01');
+
+-- transfer_contacts (11-20)
+INSERT INTO transfer_contacts (user_id, favorite_user_id, created_at) VALUES
+(11, 1, '2024-03-20 08:00:00'),
+(11, 3, '2024-03-21 09:00:00'),
+(12, 4, '2024-03-22 10:00:00'),
+(13, 2, '2024-03-23 11:00:00'),
+(14, 6, '2024-03-24 12:00:00'),
+(15, 1, '2024-03-25 13:00:00'),
+(16, 9, '2024-03-26 14:00:00'),
+(17, 10, '2024-03-27 15:00:00'),
+(19, 11, '2024-03-28 16:00:00'),
+(20, 5, '2024-03-29 17:00:00');
