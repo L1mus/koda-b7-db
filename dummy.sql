@@ -1,3 +1,9 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS payment_method;
+DROP TABLE IF EXISTS transactions;
+
 -- users
 INSERT INTO users (full_name, username, email, hash_password, hash_pin, phone, profile_picture_url, is_verified, created_at) VALUES
 ('Ghaluh Wizard', 'ghaluhwizard', 'ghaluh@gmail.com', '$2b$10$abc123hashedpassword1', '$2b$10$abc123hashedpin1', '081234567890', 'https://storage.example.com/photos/ghaluh.jpg', TRUE, '2024-01-01 08:00:00'),
@@ -91,7 +97,16 @@ INSERT INTO transactions (sender_id, receiver_id, amount, type, activity_type, s
 (2, NULL, 100000.00, 'credit', 'topup', 'success', NULL, '2024-04-11 09:00:00'),
 (4, NULL, 200000.00, 'credit', 'topup', 'success', NULL, '2024-04-12 10:00:00'),
 (7, NULL, 50000.00, 'credit', 'topup', 'pending', NULL, '2024-04-13 11:00:00'),
-(9, NULL, 150000.00, 'credit', 'topup', 'success', NULL, '2024-04-14 07:00:00');
+(9, NULL, 150000.00, 'credit', 'topup', 'success', NULL, '2024-04-14 07:00:00'),
+(7, 1, 150000.00, 'credit', 'transfer', 'success', 'Balikin duit arisan', '2024-04-18 14:00:00'),
+(9, 1, 200000.00, 'credit', 'transfer', 'success', 'Patungan kado boss', '2024-04-19 10:00:00'),
+(10, 1, 75000.00, 'credit', 'transfer', 'success', 'Bayar hutang minggu lalu', '2024-04-20 09:00:00'),
+(11, 1, 100000.00, 'credit', 'transfer', 'success', 'Transfer belanja bareng', '2024-04-21 11:00:00'),
+(1, 4, 80000.00, 'debit', 'transfer', 'success', 'Bayar makan siang', '2024-04-19 12:00:00'),
+(1, 6, 120000.00, 'debit', 'transfer', 'success', 'Patungan bensin', '2024-04-20 13:00:00'),
+(1, 9, 60000.00, 'debit', 'transfer', 'success', 'Beli kopi bareng', '2024-04-21 14:00:00'),
+(14, 1, 300000.00, 'credit', 'transfer', 'success', 'Transfer dari Wade Maret', '2024-03-15 10:00:00'),
+(1, 15, 250000.00, 'debit', 'transfer', 'success', 'Transfer ke Savannah Maret', '2024-03-20 11:00:00');
 
 -- topup_details
 INSERT INTO topup_details (transaction_id, payment_method_id, order_amount, delivery_fee, tax_amount, total_amount, created_at) VALUES
