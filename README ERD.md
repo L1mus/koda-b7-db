@@ -22,7 +22,10 @@ id serial [primary key]
 user_id int [not null]
 provider_user_id varchar(255) [unique]
 provider_name oauth_provider [not null]
+access_token varchar(255)
+refresh_token varchar(255)
 created_at timestamp [default: 'NOW()']
+expired_at timestamp
 }
 
 Table forgot_password{
@@ -50,22 +53,21 @@ unsubscribe
 Table newsletter{
 id serial [primary key]
 email varchar(254)
-user_id int [not null]
 status subscribe_status
 created_at timestamp [default: 'NOW()']
 }
 
 Table wallet {
 id serial [primary key]
-user_id int [not null]
+user_id int [not null,unique]
 balance numeric(15,2)
 created_at timestamp [default: 'NOW()']
 updated_at timestamp
 }
 
 Enum type_transaction {
-credit
-debit
+income
+expense
 }
 
 Enum type_activity_transaction {
@@ -82,13 +84,31 @@ failed
 Table transactions {
 id serial [primary key]
 user_id int [not null]
-receiver_id int [not null]
-payment_method_id int
-amount numeric(15,2)
 type type_transaction
 activity_type type_activity_transaction
+created_at timestamp [default: 'NOW()']
+}
+
+Table transfer_details{
+id serial [primary key]
+transaction_id int [not null]
+user_id int [not null]
+receiver_id int [not null]
+amount numeric(15,2)
+decriptions text
 status status_transaction
-description text
+created_at timestamp [default: 'NOW()']
+}
+
+Table topup_details {
+id serial [primary key]
+transaction_id int [not null, unique]
+user_id int [not null]
+payment_method_id int [not null]
+order_amount numeric(15,2)
+delivery_fee numeric(15,2) [default: 0]
+tax_amount numeric(15,2)
+total_amount numeric(15,2)
 created_at timestamp [default: 'NOW()']
 }
 
@@ -99,28 +119,16 @@ favorite_user_id int [not null]
 created_at timestamp [default: 'NOW()']
 }
 
-Table topup_details {
-id serial [primary key]
-transaction_id int [not null, unique]
-payment_method_id int [not null]
-order_amount numeric(15,2)
-delivery_fee numeric(15,2) [default: 0]
-tax_amount numeric(15,2)
-total_amount numeric(15,2)
-created_at timestamp [default: 'NOW()']
-}
-
 Table category_payment_method{
 id serial [primary key]
 category_name varchar(20)
-isActive boolean
 }
 
 Table payment_method {
 id serial [primary key]
 payment_category_id int [not null]
-name varchar(30) [unique]
-code varchar(5) [unique]
+name varchar(50) [unique]
+code varchar(10) [unique]
 fee numeric
 logo_url varchar(255)
 isActive boolean
@@ -128,14 +136,9 @@ isActive boolean
 
 Ref: oauth_user.user_id > users.id // one-to-many banyak oauth per user (google + fb)
 Ref: forgot_password.user_id > users.id // one-to-many banyak request reset per user
-Ref: newsletter.user_id > users.id // one-to-many 1 user bisa berlangganan banyak jenis newsletter
 Ref: wallet.user_id - users.id // one-to-one: 1 user = 1 wallet
 
 Ref: reviews.user_id > users.id // one-to-many banyak reviews per user
-
-Ref: transactions.user_id > users.id // one-to-many banyak transaksi dilakukan per user
-Ref: transactions.receiver_id > users.id // one-to-many banyak transaksi yang di terima per user
-Ref: transactions.payment_method_id > payment_method.id // one-to-many banyak transaksi menggunakan 1 metode pembayaran
 
 Ref: transfer_contacts.user_id > users.id // one-to-many 1 user dapat memiliki banyak user yang di favoritkan
 Ref: transfer_contacts.favorite_user_id > users.id // one-to-many 1 user bisa di favorite user lain
@@ -144,5 +147,4 @@ Ref: payment_method.payment_category_id > category_payment_method.id // one-to-m
 
 Ref: topup_details.transaction_id - transactions.id // one-to-one 1 detail topup = 1 transactions
 Ref: topup_details.payment_method_id > payment_method.id // one-to-one 1 metode pembayaran dapat digunakan untuk banyak detail top-up yang berbeda
-
-![Screenshot dbdiagram.io](./ERD.JPG)
+Ref: transfer_details.transaction_id - transactions.id // one-to-on
