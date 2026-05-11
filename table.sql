@@ -9,8 +9,8 @@ CREATE TYPE subscribe_status AS ENUM (
 );
  
 CREATE TYPE type_transaction AS ENUM (
-  'credit',
-  'debit'  
+  'income',
+  'expense'  
 );
  
 CREATE TYPE type_activity_transaction AS ENUM (
@@ -46,7 +46,10 @@ CREATE TABLE oauth_user (
   user_id INT NOT NULL,
   provider_name oauth_provider NOT NULL,       
   provider_user_id VARCHAR(255) UNIQUE NOT NULL,
+  access_token VARCHAR(255)
+  refresh_token VARCHAR(255)
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  expired_at TIMESTAMP
 
   CONSTRAINT fk_oauth_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
@@ -78,11 +81,8 @@ CREATE TABLE reviews (
 CREATE TABLE newsletter (
   id SERIAL PRIMARY KEY,
   email VARCHAR(254) NOT NULL UNIQUE,
-  user_id INT,
   status subscribe_status NOT NULL DEFAULT 'active',
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-
-  CONSTRAINT fk_newsletter_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 
@@ -91,7 +91,7 @@ CREATE TABLE wallet (
   user_id INT NOT NULL UNIQUE,
   balance  NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL,
 
   CONSTRAINT fk_wallet_user FOREIGN KEY (user_id) REFERENCES users (id)
 );
@@ -100,7 +100,6 @@ CREATE TABLE wallet (
 CREATE TABLE category_payment_method (
   id SERIAL PRIMARY KEY,
   category_name VARCHAR(50) NOT NULL,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -121,39 +120,51 @@ CREATE TABLE payment_method (
 
 CREATE TABLE transactions (
   id SERIAL PRIMARY KEY,
-  sender_id INT NOT NULL,
-  receiver_id INT,
-  amount NUMERIC(15, 2) NOT NULL CHECK (amount > 0),
+  user_id INT NOT NULL,
   type type_transaction NOT NULL,
   activity_type type_activity_transaction NOT NULL,
-  status status_transaction NOT NULL DEFAULT 'pending',
-  description TEXT,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
-  CONSTRAINT fk_transactions_sender FOREIGN KEY (sender_id) REFERENCES users (id),
-  CONSTRAINT fk_transactions_receiver FOREIGN KEY (receiver_id) REFERENCES users (id)
+  CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users (id),
 );
+
+CREATE TABLE transfer_details (
+  id SERIAL PRIMARY KEY,
+  transaction_id INT NOT NULL UNIQUE,
+  user_id INT NOT NULL UNIQUE,
+  receiver_id INT NOT NULL,
+  amount NUMERIC(15, 2) NOT NULL CHECK (amount > 0),
+  description TEXT,
+  status status_transaction NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT NOW(),
+
+  CONSTRAINT fk_trasfer_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
+  CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (id),
+  CONSTRAINT fk_receiver_id FOREIGN KEY (receiver_id) REFERENCES users (id)
+)
 
 
 CREATE TABLE topup_details (
   id SERIAL PRIMARY KEY,
   transaction_id INT NOT NULL UNIQUE,
+  user_id INT NOT NULL,
   payment_method_id INT NOT NULL,
   order_amount NUMERIC(15, 2) NOT NULL,         
   delivery_fee NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
   tax_amount NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
   total_amount NUMERIC(15, 2) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP DEFAULT NOW(),
 
   CONSTRAINT fk_topup_transaction FOREIGN KEY (transaction_id) REFERENCES transactions (id),
+  CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (id),
   CONSTRAINT fk_topup_payment_method FOREIGN KEY (payment_method_id) REFERENCES payment_method (id)
 );
 
 CREATE TABLE transfer_contacts (
-  id               SERIAL    PRIMARY KEY,
-  user_id          INT       NOT NULL,
-  favorite_user_id INT       NOT NULL, 
-  created_at       TIMESTAMP NOT NULL DEFAULT NOW(),
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL,
+  favorite_user_id INT NOT NULL, 
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
   CONSTRAINT uq_transfer_contacts UNIQUE (user_id, favorite_user_id),
   CONSTRAINT fk_tc_user       FOREIGN KEY (user_id) REFERENCES users (id) ,
