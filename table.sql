@@ -7,12 +7,7 @@ CREATE TYPE subscribe_status AS ENUM (
   'active',
   'unsubscribe'
 );
- 
-CREATE TYPE type_transaction AS ENUM (
-  'income',
-  'expense'  
-);
- 
+
 CREATE TYPE type_activity_transaction AS ENUM (
   'transfer',
   'topup'  
