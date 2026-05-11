@@ -65,11 +65,6 @@ created_at timestamp [default: 'NOW()']
 updated_at timestamp
 }
 
-Enum type_transaction {
-income
-expense
-}
-
 Enum type_activity_transaction {
 transfer
 topup
@@ -84,7 +79,6 @@ failed
 Table transactions {
 id serial [primary key]
 user_id int [not null]
-type type_transaction
 activity_type type_activity_transaction
 created_at timestamp [default: 'NOW()']
 }
