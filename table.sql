@@ -79,7 +79,6 @@ CREATE TABLE reviews (
 CREATE TABLE newsletter (
   id SERIAL PRIMARY KEY,
   email VARCHAR(254) NOT NULL UNIQUE,
-  user_id INT,
   status subscribe_status NOT NULL DEFAULT 'active',
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
@@ -93,7 +92,7 @@ CREATE TABLE wallet (
   user_id INT NOT NULL UNIQUE,
   balance NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL,
 
   CONSTRAINT fk_wallet_user FOREIGN KEY (user_id)
     REFERENCES users (id) ON DELETE CASCADE
@@ -102,7 +101,6 @@ CREATE TABLE wallet (
 CREATE TABLE category_payment_method (
   id SERIAL PRIMARY KEY,
   category_name VARCHAR(50) NOT NULL,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
@@ -155,7 +153,7 @@ CREATE TABLE topup_details (
   delivery_fee NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
   tax_amount NUMERIC(15, 2) NOT NULL DEFAULT 0.00,
   total_amount NUMERIC(15, 2) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  created_at TIMESTAMP DEFAULT NOW(),
 
   CONSTRAINT fk_topup_trx FOREIGN KEY (transaction_id)
     REFERENCES transactions (id) ON DELETE CASCADE,
