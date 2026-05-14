@@ -111,3 +111,127 @@ JOIN user_balance wb ON TRUE
 JOIN user_income  ui ON TRUE
 JOIN user_expense ue ON TRUE
 WHERE u.id = 1
+
+
+-- INCOME — transfer masuk + topup
+ 
+-- transfer yang diterima user 1 bulan ini
+SELECT
+  t.id,
+  t.amount,
+  t.activity_type,
+  td.description,
+  t.created_at,
+  u.full_name            AS sender_name,
+  u.phone                AS sender_phone,
+  u.profile_picture_url  AS sender_photo
+FROM transactions t
+JOIN transfer_details td ON td.transaction_id = t.id
+JOIN users u             ON u.id = t.sender_id
+WHERE td.receiver_id = 1
+  AND t.status       = 'success'
+  AND DATE_TRUNC('month', t.created_at) = DATE_TRUNC('month', NOW())
+ 
+UNION ALL
+ 
+-- topup yang dilakukan user 1 bulan ini
+SELECT
+  t.id,
+  tud.total_amount       AS amount,
+  t.activity_type,
+  NULL                   AS description,
+  t.created_at,
+  pm.name                AS sender_name,
+  NULL                   AS sender_phone,
+  pm.logo_url            AS sender_photo
+FROM transactions t
+JOIN topup_details tud ON tud.transaction_id = t.id
+JOIN payment_method pm ON pm.id = tud.payment_method_id
+WHERE t.sender_id      = 1
+  AND t.activity_type  = 'topup'
+  AND t.status         = 'success'
+  AND DATE_TRUNC('month', t.created_at) = DATE_TRUNC('month', NOW())
+ 
+ORDER BY created_at DESC;
+ 
+ 
+-- EXPENSE — transfer yang dikirim user 1
+ 
+SELECT
+  t.id,
+  t.amount,
+  t.activity_type,
+  td.description,
+  t.created_at,
+  u.full_name            AS receiver_name,
+  u.phone                AS receiver_phone,
+  u.profile_picture_url  AS receiver_photo
+FROM transactions t
+JOIN transfer_details td ON td.transaction_id = t.id
+JOIN users u             ON u.id = td.receiver_id
+WHERE t.sender_id      = 1
+  AND t.activity_type  = 'transfer'
+  AND t.status         = 'success'
+  AND DATE_TRUNC('month', t.created_at) = DATE_TRUNC('month', NOW())
+ORDER BY t.created_at DESC;
+ 
+ 
+--ACCOUNT INFO — balance, total income, total expense
+WITH income_transfer AS (
+  SELECT COALESCE(SUM(t.amount), 0) AS total
+  FROM transactions t
+  JOIN transfer_details td ON td.transaction_id = t.id
+  WHERE td.receiver_id = 1
+    AND t.status       = 'success'
+),
+income_topup AS (
+  SELECT COALESCE(SUM(amount), 0) AS total
+  FROM transactions
+  WHERE sender_id     = 1
+    AND activity_type = 'topup'
+    AND status        = 'success'
+),
+user_expense AS (
+  SELECT COALESCE(SUM(amount), 0) AS total
+  FROM transactions
+  WHERE sender_id     = 1
+    AND activity_type = 'transfer'
+    AND status        = 'success'
+)
+ 
+SELECT
+  u.full_name,
+  u.email,
+  u.phone,
+  u.profile_picture_url,
+  u.is_verified,
+  w.balance,
+  (it.total + itu.total) AS total_income,
+  ue.total               AS total_expense
+FROM users        u
+JOIN wallet       w   ON w.user_id = u.id
+JOIN income_transfer it ON TRUE
+JOIN income_topup    itu ON TRUE
+JOIN user_expense    ue  ON TRUE
+WHERE u.id         = 1
+  AND u.deleted_at IS NULL;
+ 
+ 
+--FIND RECEIVER WITH PAGINATION
+SELECT
+  u.id,
+  u.full_name,
+  u.phone,
+  u.profile_picture_url,
+  u.is_verified
+FROM users u
+WHERE u.deleted_at  IS NULL
+  AND u.is_verified  = TRUE
+  AND u.id          != 1
+  AND (
+    u.full_name ILIKE '%a%'
+    OR u.phone  ILIKE '%a%'
+  )
+ORDER BY u.full_name ASC
+LIMIT  5
+OFFSET 0;
