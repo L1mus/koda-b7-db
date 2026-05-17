@@ -249,4 +249,31 @@ SELECT
 FROM wallet w
 LEFT JOIN transactions t ON w.user_id = t.user_id
 WHERE w.user_id = $1
-GROUP BY w.balance;
+GROUP BY w.balance
+    
+--Get Transactions History with Search & Pagination
+SELECT 
+    t.id AS transaction_id,
+    t.amount,
+    t.type,
+    t.activity_type,
+    t.status,
+    t.created_at,
+    td.description AS transfer_description,
+    u_receiver.full_name AS receiver_name,
+    pm.name AS payment_method_name
+FROM transactions t
+LEFT JOIN transfer_details td ON t.id = td.transaction_id
+LEFT JOIN users u_receiver ON td.receiver_id = u_receiver.id
+LEFT JOIN topup_details tp ON t.id = tp.transaction_id
+LEFT JOIN payment_method pm ON tp.payment_method_id = pm.id
+WHERE t.user_id = $1
+  AND (
+      u_receiver.full_name ILIKE '%' || $2 || '%' OR
+      pm.name ILIKE '%' || $2 || '%' OR
+      td.description ILIKE '%' || $2 || '%'
+  )
+ORDER BY t.created_at DESC
+LIMIT $3 OFFSET $4; 
+
+
