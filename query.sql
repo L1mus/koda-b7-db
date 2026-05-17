@@ -276,4 +276,11 @@ WHERE t.user_id = $1
 ORDER BY t.created_at DESC
 LIMIT $3 OFFSET $4; 
 
-
+--Change profile 
+UPDATE users
+SET 
+    full_name = COALESCE($1, full_name),          
+    phone = COALESCE($2, phone),              
+    profile_picture_url = COALESCE($3, profile_picture_url),
+    updated_at = NOW()       
+WHERE id = $4;
