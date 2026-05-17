@@ -230,3 +230,13 @@ WHERE u.deleted_at  IS NULL
 ORDER BY u.full_name ASC
 LIMIT  5
 OFFSET 0;
+
+--Get Transactions Report
+SELECT 
+    DATE_TRUNC($2, created_at)::DATE AS period,
+    COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
+    COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense
+FROM transactions
+WHERE user_id = $1 AND status = 'success'
+GROUP BY DATE_TRUNC($2, created_at)
+ORDER BY period ASC;
