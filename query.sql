@@ -240,3 +240,13 @@ FROM transactions
 WHERE user_id = $1 AND status = 'success'
 GROUP BY DATE_TRUNC($2, created_at)
 ORDER BY period ASC;
+
+--Get User Dashboard Information (Balance, Income, Expense)
+SELECT 
+    w.balance,
+    COALESCE(SUM(CASE WHEN t.type = 'income' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS total_income,
+    COALESCE(SUM(CASE WHEN t.type = 'expense' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS total_expense
+FROM wallet w
+LEFT JOIN transactions t ON w.user_id = t.user_id
+WHERE w.user_id = $1
+GROUP BY w.balance;
