@@ -109,17 +109,8 @@ WHERE u.id = 1
 
 
 -- INCOME — transfer masuk + topup
- 
 -- transfer yang diterima user 1 bulan ini
-SELECT
-  t.id,
-  t.amount,
-  t.activity_type,
-  td.description,
-  t.created_at,
-  u.full_name            AS sender_name,
-  u.phone                AS sender_phone,
-  u.profile_picture_url  AS sender_photo
+SELECT t.id, t.amount, t.activity_type, td.description, t.created_at, u.full_name AS sender_name, u.phone AS sender_phone, u.profile_picture_url  AS sender_photo
 FROM transactions t
 JOIN transfer_details td ON td.transaction_id = t.id
 JOIN users u             ON u.id = t.sender_id
@@ -130,15 +121,7 @@ WHERE td.receiver_id = 1
 UNION ALL
  
 -- topup yang dilakukan user 1 bulan ini
-SELECT
-  t.id,
-  tud.total_amount       AS amount,
-  t.activity_type,
-  NULL                   AS description,
-  t.created_at,
-  pm.name                AS sender_name,
-  NULL                   AS sender_phone,
-  pm.logo_url            AS sender_photo
+SELECT t.id, tud.total_amount AS amount, t.activity_type, t.description AS description, t.created_at, pm.name AS sender_name, pm.phone AS sender_phone, pm.logo_url AS sender_photo
 FROM transactions t
 JOIN topup_details tud ON tud.transaction_id = t.id
 JOIN payment_method pm ON pm.id = tud.payment_method_id
@@ -152,15 +135,7 @@ ORDER BY created_at DESC;
  
 -- EXPENSE — transfer yang dikirim user 1
  
-SELECT
-  t.id,
-  t.amount,
-  t.activity_type,
-  td.description,
-  t.created_at,
-  u.full_name            AS receiver_name,
-  u.phone                AS receiver_phone,
-  u.profile_picture_url  AS receiver_photo
+SELECT t.id, t.amount, t.activity_type, td.description, t.created_at, u.full_name AS receiver_name, u.phone AS receiver_phone, u.profile_picture_url AS receiver_photo
 FROM transactions t
 JOIN transfer_details td ON td.transaction_id = t.id
 JOIN users u             ON u.id = td.receiver_id
@@ -194,15 +169,7 @@ user_expense AS (
     AND status        = 'success'
 )
  
-SELECT
-  u.full_name,
-  u.email,
-  u.phone,
-  u.profile_picture_url,
-  u.is_verified,
-  w.balance,
-  (it.total + itu.total) AS total_income,
-  ue.total               AS total_expense
+SELECT u.full_name, u.email, u.phone, u.profile_picture_url, u.is_verified, w.balance, (it.total + itu.total) AS total_income, ue.total               AS total_expense
 FROM users        u
 JOIN wallet       w   ON w.user_id = u.id
 JOIN income_transfer it ON TRUE
@@ -212,13 +179,8 @@ WHERE u.id         = 1
   AND u.deleted_at IS NULL;
  
  
---FIND RECEIVER WITH PAGINATION
-SELECT
-  u.id,
-  u.full_name,
-  u.phone,
-  u.profile_picture_url,
-  u.is_verified
+--Find receiver with pagination
+SELECT u.id, u.full_name, u.phone, u.profile_picture_url, u.is_verified
 FROM users u
 WHERE u.deleted_at  IS NULL
   AND u.is_verified  = TRUE
@@ -232,36 +194,21 @@ LIMIT  5
 OFFSET 0;
 
 --Get Transactions Report
-SELECT 
-    DATE_TRUNC($2, created_at)::DATE AS period,
-    COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
-    COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense
+SELECT  DATE_TRUNC($2, created_at)::DATE AS period, COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income, COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense
 FROM transactions
 WHERE user_id = $1 AND status = 'success'
 GROUP BY DATE_TRUNC($2, created_at)
 ORDER BY period ASC;
 
 --Get User Dashboard Information (Balance, Income, Expense)
-SELECT 
-    w.balance,
-    COALESCE(SUM(CASE WHEN t.type = 'income' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS total_income,
-    COALESCE(SUM(CASE WHEN t.type = 'expense' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS total_expense
+SELECT  w.balance, COALESCE(SUM(CASE WHEN t.type = 'income' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS total_income, COALESCE(SUM(CASE WHEN t.type = 'expense' AND t.status = 'success' THEN t.amount ELSE 0 END), 0) AS total_expense
 FROM wallet w
 LEFT JOIN transactions t ON w.user_id = t.user_id
 WHERE w.user_id = $1
 GROUP BY w.balance
     
 --Get Transactions History with Search & Pagination
-SELECT 
-    t.id AS transaction_id,
-    t.amount,
-    t.type,
-    t.activity_type,
-    t.status,
-    t.created_at,
-    td.description AS transfer_description,
-    u_receiver.full_name AS receiver_name,
-    pm.name AS payment_method_name
+SELECT  t.id AS transaction_id, t.amount, t.type, t.activity_type, t.status, t.created_at, td.description AS transfer_description, u_receiver.full_name AS receiver_name, pm.name AS payment_method_name
 FROM transactions t
 LEFT JOIN transfer_details td ON t.id = td.transaction_id
 LEFT JOIN users u_receiver ON td.receiver_id = u_receiver.id
